@@ -16,7 +16,12 @@ class UserActivityHistory(Base):
         with Session(engine) as session:
             session.add(self)
             session.commit()
-        
+     
+     def getActivitiesForUser(self, session, u_id):
+         return session.query(UserActivityHistory).filter(UserActivityHistory.user_id == u_id)
+     
+     def getUsersForActivity(self, session, a_id):
+         return session.query(UserActivityHistory).filter(UserActivityHistory.activity_id == a_id)
 
      def deleteFromDB(self, session):
           print(self.name)

@@ -8,6 +8,10 @@ class User(Base):
 
     id = Column(Integer(), primary_key=True)
     name = Column(String())
+    city = Column(String())
+    address = Column(String())
+    fave_type = Column(String())
+    age = Column(Integer())
     user_activities = relationship("UserActivityHistory", back_populates="user")
 
     def addToDB(self, engine):
@@ -18,3 +22,5 @@ class User(Base):
     def deleteFromDB(self, session):
         session.delete(self)
         session.commit()
+    def __repr__(self) -> str:
+        return f"{self.name} (age: {self.age}), lives at {self.address}, {self.city}. Their favorite activty is {self.fave_type}"
