@@ -1,30 +1,28 @@
 from classes.base import Base
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, func, desc
 from classes.activity import Activity
 from classes.user import User
 from classes.user_activity_history import UserActivityHistory
 from sqlalchemy.orm import Session, sessionmaker
 import shlex
+import random
 
 def main():
     in_prog = True
     engine = create_engine('sqlite:///students.db')
     Session = sessionmaker(engine)
     session = Session()
-    Activity(name="hikkking", activity_type = "ass").addToDB(engine)
-    Activity(name="hiking", activity_type = "outdoors").addToDB(engine)
+    # Activity(name="hikkking", activity_type = "ass").addToDB(engine)
+    # Activity(name="hiking", activity_type = "outdoors").addToDB(engine)
     #print(getActivitiesByType(session, "ass")[0].activity_type)
     response = ""
     print("Hello message")
-    displayTechnicalOptions()
-    mode = "admin"
+    # displayTechnicalOptions()
+    mode = "friendly"
     while(in_prog):
-
+        mode = input("Choose mode [admin] or [user]: ")
         if mode == "admin":
-
-            # [print(u) for u in filteredActivity(engine,session, None, "'Nicholas'", None, None, None, None, None)]
-            # [print(u) for u in filteredUsers(engine, session, None, None, None, None, None, None)]   
-            # updateUser(session, 1, "Nick", "wrestling", 4, "issy", "home")     
+   
             user_input = input("What would you like to do: ")
             if user_input == "help":
                 displayTechnicalOptions()
@@ -78,10 +76,7 @@ def main():
                         print("Entry with that ID does not exist")
                 else:
                     print("back to start")
-                # print(filteredActivity(engine, session, 1, None, None, None, None, None, None))
 
-                #session.query(Activity).first().deleteFromDB(session)    
-                #Activity(name = "hiking :)").addToDB(engine)
             elif user_input == "update":
                 user_input = input("Type the corresponding number for the Data entry type you would like to update: \n\
                 User (1), Activity (2), UserActivity(3). Type 4 to restart: ")
@@ -137,14 +132,90 @@ def main():
             elif user_input == "exit":
                 in_prog = False
             
-        
+        # todo delete and join tables?
         elif mode == "friendly":
-            displayOptions()
+            while in_prog:
+                displayOptions()
+                print("type the keyword in brackets or refer to it numerically by its order, starting with 1")
+                user_input = input("[new] or [returning] user, or [quit]?: ")
+                if user_input == "1" or user_input == "new":
+                    pass
+                elif user_input == "2" or user_input == "returning":
+                    auth = False
+                    cont = True
+                    current_user = ""
+                    while not auth and cont:
+                        user_input = input("Whats your user id? (type a non numerical to quit): ")
 
+                        try:
+                            user_input = int(user_input)
+                            if len(filteredUsers(engine, session, int(user_input), None, None, None, None, None)) != 0:
+                                print("Valid user info.")
+                                auth = passwordProtection(user_input) 
+                                current_user = filteredUsers(engine, session, int(user_input), None, None, None, None, None)[0]
+                            else:
+                                print("Invalid username. Try again")
+                        except:
+                            print("Non numerical entered")
+                            cont = False
+                    if auth:
+                        logged_in = True
+                        displayOptions()
+                        while(logged_in):
+
+                            user_input = input("Enter your choice: ")
+
+                            # View my activity history
+                            if user_input == "1":
+                                print(myActivities(current_user))
+                            
+                            # View activities in my area
+                            elif user_input == "2":
+                                [print(a) for a in filteredActivity(engine, session, None, None, None, None, None, f"'{current_user.city}'", None)]
+                                print("")
+
+                            # Activities of specific type and area
+                            elif user_input == "3":
+                                city = input("city name: ")
+                                a_type = input("type of activity: ")
+                                [print(a) for a in filteredActivity(engine, session, None, None, None, None, f"'{a_type}'", f"'{city}'", None)]
+                                print("")
+                            
+                            # set your favorite activity type
+                            elif user_input == "4":
+                                fave = input("Enter your favorite activity type: ")
+                                updateUser(session, current_user.id, None, fave, None, None, None)
+                            
+                            # New activity suggestion
+                            elif user_input == "5":
+                                my_act_ids = [act.id for act in myActivities(current_user)]
+                                print(random.choices(queryToList(session.query(Activity).filter(Activity.id.notin_(my_act_ids)))))
+
+
+                            #todo here
+                # #1 activity type in city
+                            # elif user_input == "6":
+                            #     session.query(
+                            #     func.count(A.id).label('qty')
+                            #     ).group_by(tablename.category
+                            #     ).order_by(desc('qty'))
+                            
+                            else:
+                                logged_in = False
+                                print("back to start")
+                # itinerary builder
+                elif user_input == 3:
+                    print("exiting")
+        else:
+            pass
+  
 
 def getActivitiesByType(session, a_type):
     return session.query(Activity).filter(Activity.activity_type == a_type)
 
+def myActivities(user):
+    # session.query(Activity).filt
+    return user.user_activities
 
 # Easy human typeable filters
 
@@ -173,8 +244,8 @@ def filteredActivity(engine, session, id, name, duration, family, a_type, city, 
 
 def filteredUsers(engine, session, id, name, fav_act, age, city, address):
 
-    s = (f"SELECT * from users WHERE {'' if (id == None) else 'users.id = ' + id + ' AND '}{'' if (name == None) else 'users.name = ' +name +' AND '}"\
-    f"{'' if (fav_act == None) else 'users.fave_type = ' + fav_act + ' AND '}{'' if (age == None) else 'users.age = ' + age + ' AND '}"\
+    s = (f"SELECT * from users WHERE {'' if (id == None) else 'users.id = ' + str(id) + ' AND '}{'' if (name == None) else 'users.name = ' +name +' AND '}"\
+    f"{'' if (fav_act == None) else 'users.fave_type = ' + fav_act + ' AND '}{'' if (age == None) else 'users.age = ' + str(age) + ' AND '}"\
     f"{'' if (city == None) else 'users.city = '+ city +' AND '}{'' if (address == None) else 'users.address = ' + address}")
     if s[-5:] == " AND ":
         s = s[:-5]
@@ -191,7 +262,7 @@ def filteredUsers(engine, session, id, name, fav_act, age, city, address):
     ind = []
     for entry in dic:
         ind.append(entry["id"])
-    return [act for act in session.query(User).filter(User.id.in_(ind))]
+    return [u for u in session.query(User).filter(User.id.in_(ind))]
 
 
 def filteredUserActivity(engine, session, id, user_id, activity_id):
@@ -271,18 +342,18 @@ def Noneify(ls):
             ls[ind] = None
     return ls
 
-# def removeEmptyStrings(ls):
-#     for ind in range(0, len(ls)):
-#         pass
-
-# def specialSplit(string):
-#     print(shlex.split(string, posix=False))
-
 def displayTechnicalOptions():
     print("the options")
     print("create, delete, help, read, exit")
 def displayOptions():
-    print("")
+    print("view my activities (1), ")
+
+def passwordProtection(user):
+    print("No password implementation at moment")
+    return True
+def queryToList(q):
+    return [u for u in q]
+
 main()
 # specialSplit("hello and 'hey there' king")
 # print(shlex.split("help     me 'dad dad'"))

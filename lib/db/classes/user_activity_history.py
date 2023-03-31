@@ -28,3 +28,5 @@ class UserActivityHistory(Base):
           session.delete(self)
           session.commit()
      
+     def __repr__(self) -> str:
+         return f"{self.user.name} at {self.activity.name} ({self.activity.activity_type})"
