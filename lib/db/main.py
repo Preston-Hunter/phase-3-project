@@ -21,6 +21,7 @@ def main():
     # displayTechnicalOptions()
     mode = "friendly"
     while(in_prog):
+        print("Choose your option by typing the appropriate word that is contained in square brackets")
         mode = input("Choose mode [admin] or [user], or [quit]: ")
         if mode == "admin":
             in_admin = True
