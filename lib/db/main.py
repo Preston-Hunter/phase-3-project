@@ -32,18 +32,18 @@ def main():
                     if user_input == "1":
                         print("Enter data for the user entry in this order")
                         user_field_list = input("Name age address city favorite_activity_type: \n")
-                        user_field_list = shlex.split(user_field_list, posix=False)
+                        user_field_list = shlex.split(user_field_list)
                         User(name = user_field_list[0],city = user_field_list[3],address = user_field_list[2], fave_type = user_field_list[4],age = int(user_field_list[1])).addToDB(engine)
                     elif user_input == "2":
                         print("Enter data for the activity entry in this order")
                         user_field_list = input("name address city duration family_friendly(a value of 0 or 1) : \n")
-                        user_field_list = shlex.split(user_field_list, posix=False)
+                        user_field_list = shlex.split(user_field_list)
                         
                         Activity(name = user_field_list[0],address = user_field_list[1], city = user_field_list[2], duration = int(user_field_list[3]), family_friendly = int(user_field_list[4]), activity_type = user_field_list[5]).addToDB(engine)
                     elif user_input == "3":
                         print("Enter data for the activity entry in this order: \n")
                         user_field_list = input("user_id activity_id")
-                        user_field_list = shlex.split(user_field_list, posix=False)
+                        user_field_list = shlex.split(user_field_list)
                         UserActivityHistory(user_id = int(user_field_list[0]), activity_id = int(user_field_list[1])).addToDB(engine)
                     elif user_input == "4":
                         print("back to start")
