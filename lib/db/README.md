@@ -1,8 +1,9 @@
-a.	Instructions for running your project
+# User Activity Manager
+## a.	Instructions for running your project
 
     Run python seed.py, then run python main.py. Make sure you are in appropriate python environment (pipenv shell). 
 
-b.	An overview about what your project is about
+## b.	An overview about what your project is about
 
     My project allows for the keeping track of different users and different activities. Each user has their id, name, city, address, fave_type, age, and each activity has their id, name, duration, family_friendly, activity_type, city, address. 
 
@@ -14,7 +15,7 @@ b.	An overview about what your project is about
 
     Options on what to do are either selected numerically or by entering key word. Info on what prompt does what are given on start up and entering a different mode, and can be requested again by typing help or the corresponding number, depending on where you are in program. 
 
-c.	Instructions for using your project
+## c.	Instructions for using your project
 Upon entering the project, you will have choice of admin mode, user mode, or quitting.
 
     - Admin

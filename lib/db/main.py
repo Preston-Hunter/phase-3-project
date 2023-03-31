@@ -13,12 +13,8 @@ def main():
     engine = create_engine('sqlite:///students.db')
     Session = sessionmaker(engine)
     session = Session()
-    # Activity(name="hikkking", activity_type = "ass").addToDB(engine)
-    # Activity(name="hiking", activity_type = "outdoors").addToDB(engine)
-    #print(getActivitiesByType(session, "ass")[0].activity_type)
     response = ""
-    print("Hello message")
-    # displayTechnicalOptions()
+    print("Welcome!")
     mode = "friendly"
     while(in_prog):
         print("Choose your option by typing the appropriate word that is contained in square brackets")
@@ -31,7 +27,7 @@ def main():
                 if user_input == "help":
                     displayTechnicalOptions()
                 elif user_input == "create":
-                    user_input = input("Type the corresponding number for the Data entry you would like to create: \n\
+                    user_input = input("Type the corresponding number for the Data entry you would like to create. \n\
                                     User (1), Activity (2), UserActivity(3). Type 4 to restart: ")
                     if user_input == "1":
                         print("Enter data for the user entry in this order")
@@ -368,8 +364,6 @@ def updateUserActivity(session, id, user_id, act_id):
     session.commit()
     print("updated: ",session.query(UserActivityHistory).filter(UserActivityHistory.id == id).first())
     print("")
-
-
 
 def keepOrUpdateValue(original, new):
     if new == None:
